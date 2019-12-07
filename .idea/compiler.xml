@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="bos-service" />
+        <module name="bos-web" />
+        <module name="bosdao" />
+        <module name="bosdomain" />
+        <module name="bosutlis" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bosservice" target="1.7" />
+      <module name="bosweb" target="1.7" />
+      <module name="privilegedemo" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

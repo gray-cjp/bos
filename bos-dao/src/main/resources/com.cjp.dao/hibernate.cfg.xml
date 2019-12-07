@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.connection.isolation">4</property>
+        <mapping resource="com/cjp/domain/User.hbm.xml"></mapping>
+        <mapping resource="com/cjp/domain/Staff.hbm.xml"></mapping>
+        <mapping resource="com/cjp/domain/Subarea.hbm.xml"></mapping>
+        <mapping resource="com/cjp/domain/Region.hbm.xml"></mapping>
+        <mapping resource="com/cjp/domain/Decidedzone.hbm.xml"></mapping>
+    </session-factory>
+</hibernate-configuration>

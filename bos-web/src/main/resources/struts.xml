@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 配置常量 -->
+	<!-- 字符集 -->
+	<constant name="struts.i18n.encoding" value="UTF-8"></constant>
+	<!-- 开发模式 -->
+	<constant name="struts.devMode" value="false"></constant>
+	<!-- 主题 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+	<!-- 扩展名 -->
+	<constant name="struts.action.extension" value="action"></constant>
+
+	<!-- 通用package -->
+	<package name="basicstruts2" extends="struts-default">
+        <interceptors>
+            <!-- 注册自定义拦截器 -->
+            <interceptor name="bosLoginIterceptor" class="com.cjp.interceptor.BOSLoginIterceptor">
+                <!-- 指定哪些方法不需要拦截 -->
+                <param name="excludeMethods">login</param>
+            </interceptor>
+			<interceptor name="encodingInterceptor" class="com.cjp.interceptor.EncodingInterceptor"></interceptor>
+            <!-- 定义拦截器栈 -->
+            <interceptor-stack name="myStack">
+				<interceptor-ref name="encodingInterceptor"/>
+                <interceptor-ref name="bosLoginIterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+        <!--重新设置默认拦截器-->
+        <default-interceptor-ref name="myStack"/>
+		<!-- 全局结果集定义 -->
+		<global-results>
+			<result name="login">/login.jsp</result>
+			<result name="unauthorized">unauthorized.jsp</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping exception="org.apache.shiro.authz.UnauthorizedException" result="unauthorized"></exception-mapping>
+		</global-exception-mappings>
+		<!-- 需要进行权限控制的页面访问 -->
+		<action name="page_*_*">
+			<result type="dispatcher">/WEB-INF/pages/{1}/{2}.jsp</result>
+		</action>
+		<action name="userAction_*" class="userAction" method="{1}">
+			<result name="home">/index.jsp</result>
+		</action>
+		<action name="staffAction_*" class="com.cjp.action.Impl.StaffAction" method="{1}">
+			<result name="success">\WEB-INF\pages\base\staff.jsp</result>
+			<result name="list">\WEB-INF\pages\base\staff.jsp</result>
+		</action>
+		<action name="regionAction_*" class="regionAction" method="{1}">
+			<result name="home">/index.jsp</result>
+		</action>
+		<action name="subareaAction_*" class="subareaAction" method="{1}">
+			<result name="list">\WEB-INF\pages\base\subarea.jsp</result>
+		</action>
+		<action name="decidezoneAction_*" class="decidezoeAction" method="{1}">
+			<result name="list">\WEB-INF\pages\base\decidedzone.jsp</result>
+		</action>
+		<action name="noticebillAction_*" class="noticebillAction" method="{1}">
+		</action>
+		<action name="functionAction_*" class="functionAction" method="{1}"></action>
+	</package>
+</struts>

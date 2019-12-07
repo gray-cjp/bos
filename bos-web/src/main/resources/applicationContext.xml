@@ -1,0 +1,88 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jaxws="http://cxf.apache.org/jaxws"
+	   xmlns:soap="http://cxf.apache.org/bindings/soap"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd 
+	http://www.springframework.org/schema/tx  
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://cxf.apache.org/bindings/soap
+	http://cxf.apache.org/schemas/configuration/soap.xsd
+    http://cxf.apache.org/jaxws
+	http://cxf.apache.org/schemas/jaxws.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<!--<context:property-placeholder location="db.properties"/>-->
+<!--C3p0-->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/maven" />
+		<property name="user" value="root" />
+		<property name="password" value="258753" />
+	</bean>
+	<!--sessionFactory-->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocations" value="classpath:com.cjp.dao/hibernate.cfg.xml"/>
+		<!--<property name="hibernateProperties">-->
+			<!--<props>-->
+				<!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>-->
+				<!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+				<!--<prop key="hibernate.show_sql">true</prop>-->
+				<!--<prop key="hibernate.format_sql">true</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+		<!--<property name="mappingResources">-->
+			<!--<list>-->
+				<!--<value>classpath*:com/cjp/domain/User.hbm.xml</value>-->
+			<!--</list>-->
+		<!--</property>-->
+	</bean>
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+		<property name="loginUrl" value="/login.jsp"/>
+		<property name="successUrl" value="index.jsp"/>
+		<property name="unauthorizedUrl" value="unauthorized.jsp"/>
+		<!--指定url拦截策略-->
+		<property name="filterChainDefinitions">
+			<value>
+				/css/** = anon
+				/js/** = anon
+				/images/** = anon
+				/login.jsp* =anon
+				/validatecode.jsp* = anon
+				/userAction_login.action = anon
+				/page_base_staff.action =perms["staff-list"]
+				/* = authc
+			</value>
+		</property>
+	</bean>
+	<!--//安全管理器-->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="bosRealm"/>
+    </bean>
+	<!--//realm-->
+    <bean id="bosRealm" class="com.cjp.realm.BOSRealm"/>
+	<!--//事务管理-->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!--//开启注解扫描-->
+	<context:component-scan base-package="com.cjp"/>
+    <context:annotation-config/>
+	<tx:annotation-driven/>
+	<!-- 开启shiro框架注解支持 -->
+	<bean id="defaultAdvisorAutoProxyCreator"
+		  class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<!-- 必须使用cglib方式为Action对象创建代理对象 -->
+		<property name="proxyTargetClass" value="true"/>
+	</bean>
+
+	<!-- 配置shiro框架提供的切面类，用于创建代理对象 -->
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
+	<!--//webservice 客户端-->
+	<jaxws:client id="crmClient" serviceClass="com.cjp.utils.CustomerService" address="http://localhost:8080/webservice_crm/service/customer"></jaxws:client>
+</beans>
